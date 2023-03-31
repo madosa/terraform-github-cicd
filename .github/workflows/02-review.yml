@@ -85,6 +85,7 @@ jobs:
   #      REMOVE_LABEL: "awaiting%20review"
 
   approved:
+    needs: [review_request]
     if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     steps:
