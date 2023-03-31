@@ -69,21 +69,21 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
-  labelWhenApproved:
-    needs: [review_request]
-    name: Label when approved
-    runs-on: ubuntu-latest
-    steps:
-    - name: Label when approved
-      uses: pullreminders/label-when-approved-action@master
-      env:
-        APPROVALS: "1"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        ADD_LABEL: "dev approved"
-        REMOVE_LABEL: "awaiting%20review"
-
-  #approved:
-  #  if: github.event.review.state == 'approved'
+  #labelWhenApproved:
+  #  needs: [review_request]
+  #  name: Label when approved
   #  runs-on: ubuntu-latest
   #  steps:
-  #    - run: echo "This PR was approved"
+  #  - name: Label when approved
+  #    uses: pullreminders/label-when-approved-action@master
+  #    env:
+  #      APPROVALS: "1"
+  #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #      ADD_LABEL: "dev approved"
+  #      REMOVE_LABEL: "awaiting%20review"
+
+  approved:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This PR was approved"
