@@ -37,21 +37,15 @@ jobs:
         aws-region: us-east-1
         role-to-assume: ${{ secrets.DEV_DEPLOY_ROLE }}
 
-    #- name: Terraform Init - ${{ matrix['path'] }}
-    #  id: init
-    #  run: |
-    #    SAVED_TF_WORKSPACE=$TF_WORKSPACE
-    #    unset TF_WORKSPACE
-    #    terraform init --reconfigure -input=false -backend-config="key=${{matrix['path']}}" -backend-config="environments/${{matrix.path}}.conf"
-    #    TF_WORKSPACE=$SAVED_TF_WORKSPACE
-    #    terraform workspace select "${TF_WORKSPACE}" || terraform workspace new "${TF_WORKSPACE}"
-    
     - name: Terraform Init - ${{ matrix['path'] }}
       id: init
       run: |
-        terraform init --reconfigure
-
-
+        SAVED_TF_WORKSPACE=$TF_WORKSPACE
+        unset TF_WORKSPACE
+        terraform init -input=false -backend-config="key=${{matrix['path']}}" -backend-config="environments/${{matrix.path}}.conf"
+        TF_WORKSPACE=$SAVED_TF_WORKSPACE
+        terraform workspace select "${TF_WORKSPACE}" || terraform workspace new "${TF_WORKSPACE}"
+    
     - name: Post Init - ${{ matrix['path'] }}
       if: always() && github.ref != 'refs/heads/main' && (steps.init.outcome == 'success' || steps.init.outcome == 'failure')
       uses: robburger/terraform-pr-commenter@v1
