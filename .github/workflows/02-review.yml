@@ -76,6 +76,8 @@ jobs:
     #needs: [review_request]
     name: Label when approved
     runs-on: ubuntu-latest
+    permissions: write-all
+
     steps:
     - name: Label when approved
       uses: pullreminders/label-when-approved-action@master
