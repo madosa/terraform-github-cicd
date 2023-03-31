@@ -1,10 +1,12 @@
 on:
   pull_request:
-    types: [opened, reopened]
-  paths:
-    - 'environments/*'
-    - '**.tf'
-    - '.github/**'
+    types: 
+      - opened, 
+      - reopened
+    paths:
+      - 'environments/*'
+      - '**.tf'
+      - '.github/**'
   
 
 jobs:
