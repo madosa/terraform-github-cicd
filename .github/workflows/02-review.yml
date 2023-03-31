@@ -1,0 +1,89 @@
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  review_request:
+    name: request-review
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - dev
+    env:
+      TF_VAR_allowed_account_id: ${{ secrets.ALLOWED_ACCOUNT_ID }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      EXPAND_SUMMARY_DETAILS: true
+      TF_IN_AUTOMATION: true
+      TF_WORKSPACE: ${{ matrix['path'] }}
+
+    permissions: write-all
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: true
+        terraform_version: 1.3.0
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1-node16
+      with:
+        aws-region: us-east-1
+        role-to-assume: ${{ secrets.DEV_DEPLOY_ROLE }}
+
+    - name: Terraform Init - ${{ matrix['path'] }}
+      id: init
+      run: |
+        SAVED_TF_WORKSPACE=$TF_WORKSPACE
+        unset TF_WORKSPACE
+        terraform init -upgrade -input=false -backend-config="key=${{matrix['path']}}" -backend-config="environments/${{matrix.path}}.conf"
+        TF_WORKSPACE=$SAVED_TF_WORKSPACE
+        terraform workspace select "${TF_WORKSPACE}" || terraform workspace new "${TF_WORKSPACE}"
+
+
+    - name: Post Init - ${{ matrix['path'] }}
+      if: always() && github.ref != 'refs/heads/main' && (steps.init.outcome == 'success' || steps.init.outcome == 'failure')
+      uses: robburger/terraform-pr-commenter@v1
+      with:
+        commenter_type: init
+        commenter_input: ${{ format('{0}{1}', steps.init.outputs.stdout, steps.init.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.init.outputs.exitcode }}
+
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan --var-file=environments/${{matrix.path}}.auto.tfvars --out=plan.tfplan
+      continue-on-error: true
+
+    - name: Post Plan
+      uses: robburger/terraform-pr-commenter@v1
+      env:
+        EXPAND_SUMMARY_DETAILS: true # Override global environment variable; expand details just for this step
+      with:
+        commenter_type: plan
+        commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
+
+  labelWhenApproved:
+    name: Label when approved
+    runs-on: ubuntu-latest
+    steps:
+    - name: Label when approved
+      uses: pullreminders/label-when-approved-action@master
+      env:
+        APPROVALS: "1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ADD_LABEL: "dev approved"
+        REMOVE_LABEL: "awaiting%20review"
+
+  #approved:
+  #  if: github.event.review.state == 'approved'
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - run: echo "This PR was approved"
