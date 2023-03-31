@@ -35,7 +35,9 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v1-node16
       with:
         aws-region: us-east-1
-        role-to-assume: ${{ secrets.DEV_DEPLOY_ROLE }}
+        #role-to-assume: ${{ secrets.DEV_DEPLOY_ROLE }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Terraform Init - ${{ matrix['path'] }}
       id: init
