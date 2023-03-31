@@ -1,6 +1,11 @@
 on:
   pull_request:
     types: [opened, reopened]
+  paths:
+    - 'environments/*'
+    - '**.tf'
+    - '.github/**'
+  
 
 jobs:
   terraform-scan:
