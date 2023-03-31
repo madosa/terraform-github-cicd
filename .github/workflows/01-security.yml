@@ -5,10 +5,12 @@ on:
     types: 
       - opened
       - reopened
+      - synchronize
+      - edited
     paths:
       - 'environments/*'
       - '**.tf'
-      - '.github/**'
+      - './.github/**'
   
 
 jobs:
