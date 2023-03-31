@@ -7,10 +7,6 @@ on:
       - reopened
       - synchronize
       - edited
-    paths:
-      - 'environments/*'
-      - '**.tf'
-      - './.github/**'
   
 
 jobs:
