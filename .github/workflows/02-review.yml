@@ -1,6 +1,6 @@
 on:
   pull_request_review:
-    types: [submitted]
+    #types: [submitted]
 
 jobs:
   review_request:
@@ -73,7 +73,7 @@ jobs:
         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
   labelWhenApproved:
-    needs: [review_request]
+    #needs: [review_request]
     name: Label when approved
     runs-on: ubuntu-latest
     steps:
@@ -83,7 +83,6 @@ jobs:
         APPROVALS: "1"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ADD_LABEL: "dev approved"
-        REMOVE_LABEL: "awaiting%20review"
 
   #approved:
   #  needs: [review_request]
