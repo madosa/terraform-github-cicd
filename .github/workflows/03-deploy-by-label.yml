@@ -1,7 +1,7 @@
 name: Approve Label Workflow # Name of the workflow
 
 on:
-  issues: # Trigger the workflow when an issue event occurs
+  pull_request: # Trigger the workflow when an issue event occurs
     types: [labeled] # Only when a label is added to an issue
 
 jobs:
