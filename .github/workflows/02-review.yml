@@ -11,6 +11,7 @@ jobs:
       matrix:
         path:
           - dev
+          - prd
     env:
       TF_VAR_allowed_account_id: ${{ secrets.ALLOWED_ACCOUNT_ID }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,22 +72,40 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
-  #labelWhenApproved:
-  #  needs: [review_request]
-  #  name: Label when approved
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #  - name: Label when approved
-  #    uses: pullreminders/label-when-approved-action@master
-  #    env:
-  #      APPROVALS: "1"
-  #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #      ADD_LABEL: "dev approved"
-  #      REMOVE_LABEL: "awaiting%20review"
-
-  approved:
+  labelWhenApproved:
     needs: [review_request]
-    if: github.event.review.state == 'approved'
+    name: Label when approved
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This PR was approved"
+    - name: Label when approved
+      uses: pullreminders/label-when-approved-action@master
+      env:
+        APPROVALS: "1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ADD_LABEL: "dev approved"
+        REMOVE_LABEL: "awaiting%20review"
+
+  #approved:
+  #  needs: [review_request]
+  #  if: github.event.review.state == 'approved'
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - run: echo "This PR was approved"
+  
+on:
+  issues: # Trigger the workflow when an issue event occurs
+    types: [labeled] # Only when a label is added to an issue
+
+  approve_job: # Name of the job
+    needs: [approved]
+    if: ${{ github.event.label.name == 'dev approved' }} # Run the job only if the label added is 'approve'
+    runs-on: ubuntu-latest # Operating system to run the job on
+    steps:
+      - name: Checkout code # Name of the step
+        uses: actions/checkout@v2 # Action to checkout the code
+      - name: Run tests # Name of the step
+        run: echo "Running tests..." # Command to run the tests
+      - name: Deploy # Name of the step
+        uses: some-action/deploy@v1 # Action to deploy the code
+        with:
+          environment: dev # Environment to deploy the code to
