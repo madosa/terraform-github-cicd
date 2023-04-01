@@ -94,11 +94,11 @@ jobs:
           commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
           commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
       
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/${{ inputs.apply-branch }}' && github.event_name == 'push'
-        id: apply
-        run: |
-          terraform apply -auto-approve -input=false -var-file=.env/${{ github.event.inputs.environment || 'dev' }}/terraform.tfvars
+      #- name: Terraform Apply
+      #  if: github.ref == 'refs/heads/${{ inputs.apply-branch }}' && github.event_name == 'push'
+      #  id: apply
+      #  run: |
+      #    terraform apply -auto-approve -input=false -var-file=.env/${{ github.event.inputs.environment || 'dev' }}/terraform.tfvars
       
       - name: Terraform destroy
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
