@@ -3,10 +3,19 @@ name: "Infracost analysis and Terraform deployment"
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment to run the workflow against'
-        type: environment
-        required: true
+      #environment:
+      #  description: 'Environment to run the workflow against'
+      #  type: environment
+      #  required: true
+      #boolean:
+      #  type: boolean
+      #  description: True or False
+      choice:
+        type: choice
+        description: 'Select Environment'
+        options:
+        - dev
+        - prod
 #   push:
 #     branches: [ main ]
 #     paths: 'terraform/**'
