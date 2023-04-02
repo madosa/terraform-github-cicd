@@ -34,7 +34,8 @@ jobs:
     # important to specify the environment here so workflow knows where to deploy your artifact to.
     # default environment to "dev" if it is not passed in through workflow_dispatch manual trigger
     # environment: ${{ github.event.inputs.environment || 'dev' }}
-    environment: ${{ inputs.environment || 'dev' }}
+    # environment: ${{ inputs.environment || 'dev' }}
+    environment: 'dev'
 
     steps:
       - name: Checkout Code
