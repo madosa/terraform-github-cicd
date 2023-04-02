@@ -13,6 +13,10 @@ on:
         required: false
         type: string
         default: 'main'
+      environment:
+        required: false
+        type: string
+        default: 'dev'
         
 defaults:
   run:
@@ -29,7 +33,7 @@ jobs:
 
     # important to specify the environment here so workflow knows where to deploy your artifact to.
     # default environment to "dev" if it is not passed in through workflow_dispatch manual trigger
-    environment: ${{ github.event.inputs.environment || 'dev' }}
+    environment: ${{ inputs.environment || 'dev' }}
 
     steps:
       - name: Checkout Code
@@ -51,22 +55,22 @@ jobs:
           # credit: https://github.com/hashicorp/setup-terraform/issues/33
           git config --global url."https://oauth2:${{ secrets.NPM_TOKEN }}@github.com".insteadOf https://github.com
           rm -rf .terraform
-          terraform init -backend-config='./.env/${{ github.event.inputs.environment || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
+          terraform init -backend-config='./.env/${{ inputs.environment || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
       
-      - name: Terraform Plan
+      - name: Terraform Plan - ${{ inputs.environment }}
         id: plan
         run: |
-          terraform plan -input=false -var-file=.env/${{ github.event.inputs.environment || 'dev' }}/terraform.tfvars -no-color
+          terraform plan -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -no-color
       
-      - name: Terraform Apply
+      - name: Terraform Apply - ${{ inputs.environment }}
         if: github.ref == 'refs/heads/${{ inputs.apply-branch }}' && github.event_name == 'push'
         id: apply
         run: |
-          terraform apply -auto-approve -input=false -var-file=.env/${{ github.event.inputs.environment || 'dev' }}/terraform.tfvars
+          terraform apply -auto-approve -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars
       
       - name: Terraform destroy
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
         if: github.ref == 'refs/heads/destroy'
         id: destroy
         run: |
-          terraform destroy -auto-approve -input=false -var-file=.env/${{ github.event.inputs.environment || 'dev' }}/terraform.tfvars
+          terraform destroy -auto-approve -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars
