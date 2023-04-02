@@ -67,7 +67,7 @@ jobs:
     secrets: inherit
 
   deployment:
-    needs: [deployment]
+    needs: [review]
     #needs: infracost
     permissions:
       id-token: write  # need this for OIDC
