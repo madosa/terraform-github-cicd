@@ -44,16 +44,17 @@ jobs:
     #needs: infracost
     permissions:
       id-token: write  # need this for OIDC
-      contents: read   # This is required for actions/checkout
+      contents: write   # This is required for actions/checkout
     #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
     uses: ./.github/workflows/scanner.yml
     with:
       # need to specify working-directory as that's where the terraform files live in the source code
       working-directory: ./terraform
-      environment: inputs.environment
+      environment: ${{ inputs.environment }}
     secrets: inherit
 
   review:
+    needs: [scanner]
     permissions:
       id-token: write  # need this for OIDC
       contents: read   # This is required for actions/checkout
@@ -62,10 +63,11 @@ jobs:
     with:
       # need to specify working-directory as that's where the terraform files live in the source code
       working-directory: ./terraform
-      environment: inputs.environment
+      environment: ${{ inputs.environment }}
     secrets: inherit
 
   deployment:
+    needs: [deployment]
     #needs: infracost
     permissions:
       id-token: write  # need this for OIDC
@@ -75,5 +77,5 @@ jobs:
     with:
       # need to specify working-directory as that's where the terraform files live in the source code
       working-directory: ./terraform
-      environment: inputs.environment
+      environment: ${{ inputs.environment }}
     secrets: inherit
