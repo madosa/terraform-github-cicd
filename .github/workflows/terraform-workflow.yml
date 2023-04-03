@@ -80,6 +80,7 @@ jobs:
   
   destroy:
     #needs: infracost
+    if: github.ref == 'refs/heads/destroy'
     permissions:
       id-token: write  # need this for OIDC
       contents: read   # This is required for actions/checkout
@@ -89,4 +90,6 @@ jobs:
       # need to specify working-directory as that's where the terraform files live in the source code
       working-directory: ./terraform
       environment: ${{ inputs.environment }}
+      bucket_name: 'jingood2-s3-tfstates'
+      key: 'vpc'
     secrets: inherit
