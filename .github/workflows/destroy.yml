@@ -106,7 +106,7 @@ jobs:
         if: github.ref == 'refs/heads/destroy'
         id: destroy
         run: |
-          terraform apply destroy.tfplan -auto-approve
+          terraform apply destroy.tfplan
       
       - name: Delete plan file
         if: steps.destroy.outcome == 'success'
