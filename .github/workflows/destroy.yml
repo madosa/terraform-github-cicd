@@ -106,7 +106,6 @@ jobs:
         if: github.ref == 'refs/heads/destroy'
         id: destroy
         run: |
-          #terraform destroy -auto-approve -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars
           terraform apply destroy.tfplan -auto-approve
       
       - name: Delete plan file
