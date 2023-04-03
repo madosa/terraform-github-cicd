@@ -71,7 +71,7 @@ jobs:
         with:
           command: submit
           plan_contents: ${{steps.plan.outputs.stdout}}
-           external_service_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          external_service_url: ${{ secrets.SLACK_WEBHOOK_URL }}
       
       - name: send slack notification
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
