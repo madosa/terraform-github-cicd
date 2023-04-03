@@ -71,8 +71,18 @@ jobs:
         with:
           command: submit
           plan_contents: ${{steps.plan.outputs.stdout}}
-          external_service_url: "https://my-projecttalk.slack.com/archives/D7WPXJ4TA"
       
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: terraform-plan
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: ${{steps.submit_plan.outputs.approval_prompt_url}}
+          SLACK_TITLE: Post Title
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: 'https://hooks.slack.com/services/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'
+
     
       - name: Terraform Apply - ${{ inputs.environment }}
         if: github.ref == 'refs/heads/${{ inputs.apply-branch }}' && github.event_name == 'push'
