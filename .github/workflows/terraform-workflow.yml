@@ -80,7 +80,6 @@ jobs:
   
   destroy:
     #needs: infracost
-    if: github.ref == 'refs/heads/destroy'
     permissions:
       id-token: write  # need this for OIDC
       contents: read   # This is required for actions/checkout
