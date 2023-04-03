@@ -87,7 +87,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
         with:
-          payload-file-path: "${{steps.plan.outputs.stdout}}"
+          payload: "${{steps.plan.outputs.stdout}}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
