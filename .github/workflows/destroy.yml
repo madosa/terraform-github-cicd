@@ -1,4 +1,4 @@
-name: "Terraform Deployment"
+name: "Terraform Destroy"
 
 on:
   workflow_call:
@@ -50,7 +50,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@7b3bcd8d76f3cbaec0a3564e53de7c9adf00f0a7
 
-      - name: Terraform Init
+      - name: Terraform Init - ${{ inputs.environment }}
         id: init
         run: |
           # passes a NPM_TOKEN which has access to private repo as client app doesn't pass such credential in when calling tf reusable module.
@@ -63,7 +63,7 @@ jobs:
       - name: Terraform Plan - ${{ inputs.environment }}
         id: plan
         run: |
-          terraform plan -no-color -json -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out tfplan
+          terraform plan -destroy  -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out destroy.tfplan
       
       #- name: Submit plan for approval
       #  uses: jbergknoff/github-action-wait-for-terraform-plan-approval@v1
