@@ -63,7 +63,7 @@ jobs:
       - name: Terraform Plan - ${{ inputs.environment }}
         id: plan
         run: |
-          terraform plan -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out tfplan
+          terraform plan -json -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out tfplan
       
       #- name: Submit plan for approval
       #  uses: jbergknoff/github-action-wait-for-terraform-plan-approval@v1
@@ -76,9 +76,9 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: general
-          SLACK_COLOR: ${{ steps.plan.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_COLOR: ${{ steps.init.outputs.exitcode }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: ${{steps.plan.outputs.stdout}}
+          SLACK_MESSAGE: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
           SLACK_TITLE: Post Title
           SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
