@@ -71,11 +71,8 @@ jobs:
           - dev
           - prod
     env:
-      TF_VAR_allowed_account_id: ${{ secrets.ALLOWED_ACCOUNT_ID }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       EXPAND_SUMMARY_DETAILS: true
       TF_IN_AUTOMATION: true
-      TF_WORKSPACE: ${{ matrix['path'] }}
 
     permissions: write-all
 
@@ -99,6 +96,7 @@ jobs:
     - name: Terraform Init - ${{ matrix['path'] }}
       id: init
       run: |
+        unset TF_WORKSPACE
         rm -rf .terraform
         terraform init -backend-config='./.env/${{ matrix['path'] || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
         terraform workspace select "${{matrix['path']}}" || terraform workspace new "${{matrix['path']}}"
