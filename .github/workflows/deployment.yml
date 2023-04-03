@@ -81,7 +81,7 @@ jobs:
           SLACK_MESSAGE: ${{steps.plan.outputs.stdout}}
           SLACK_TITLE: Post Title
           SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: 'https://hooks.slack.com/services/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'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     
       - name: Terraform Apply - ${{ inputs.environment }}
