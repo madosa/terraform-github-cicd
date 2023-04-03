@@ -83,13 +83,22 @@ jobs:
       #    SLACK_USERNAME: rtCamp
       #    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
       
-      - name: Send custom JSON data to Slack workflow
+      #- name: Send custom JSON data to Slack workflow
+      #  id: slack
+      #  uses: slackapi/slack-github-action@v1.23.0
+      #  with:
+      #    payload: "${{steps.plan.outputs.stdout}}"
+      #  env:
+      #    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: send slack notification
+        # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          payload: "${{steps.plan.outputs.stdout}}"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+           terraform show -no-color tfplan > slack_response.txt
+           sed -i 's/\r$//g' slack_response.txt
+           SLACK_MESSAGE=$(cat slack_response.txt | tail -n 10 | sed '$!s/$/\\n/' | tr -d '\n')
+           curl -X POST -H 'Content-type: application/json' --data "{'text':'$MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
     
       #- name: Terraform Apply - ${{ inputs.environment }}
