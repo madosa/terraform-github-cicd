@@ -109,6 +109,6 @@ jobs:
           #terraform destroy -auto-approve -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars
           terraform apply destroy.tfplan -auto-approve
       
-       - name: Delete plan file
+      - name: Delete plan file
         if: steps.destroy.outcome == 'success'
         run: aws s3 rm s3://${{inputs.bucket_name}}/env:/${{inputs.environment}}/${{inputs.key}}/terraform.tfstate
