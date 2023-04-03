@@ -59,9 +59,11 @@ jobs:
     name: terraform-plan
     needs: [scanner]
     runs-on: ubuntu-latest
+
     defaults:
       run:
-        working-directory: ${{ inputs.working-directory }}
+        working-directory: './terraform'
+    
     strategy:
       fail-fast: false
       matrix:
