@@ -33,7 +33,6 @@ jobs:
   #  secrets: inherit
   scanner:
     #needs: infracost
-    permissions: write-all
     #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
     uses: ./.github/workflows/scanner.yml
     with:
@@ -92,11 +91,11 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
     - name: Terraform Init - ${{ matrix['path'] }}
-        id: init
-        run: |
-          rm -rf .terraform
-          terraform init -backend-config='./.env/${{ matrix['path'] || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
-          terraform workspace select "${{matrix['path']}}" || terraform workspace new "${{matrix['path']}}"
+      id: init
+      run: |
+        rm -rf .terraform
+        terraform init -backend-config='./.env/${{ matrix['path'] || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
+        terraform workspace select "${{matrix['path']}}" || terraform workspace new "${{matrix['path']}}"
 
     - name: Post Init - ${{ matrix['path'] }}
       if: always() && github.ref != 'refs/heads/main' && (steps.init.outcome == 'success' || steps.init.outcome == 'failure')
@@ -108,9 +107,9 @@ jobs:
 
 
     - name: Terraform Plan - ${{ matrix['path'] }}
-        id: plan
-        run: |
-          terraform plan -no-color -input=false -var-file=.env/${{ matrix['path'] || 'dev' }}/terraform.tfvars -out tfplan
+      id: plan
+      run: |
+        terraform plan -no-color -input=false -var-file=.env/${{ matrix['path'] || 'dev' }}/terraform.tfvars -out tfplan
 
     - name: Post Plan
       uses: robburger/terraform-pr-commenter@v1
@@ -137,7 +136,7 @@ jobs:
     secrets: inherit
   
   deployment-prod:
-    needs: [terraform-plan]
+    needs: [deployment-dev]
     #needs: infracost
     permissions:
       id-token: write  # need this for OIDC
