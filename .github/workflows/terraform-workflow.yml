@@ -58,9 +58,9 @@ jobs:
     name: terraform-plan
     needs: [scanner]
     runs-on: ubuntu-latest
-    #defaults:
-    #  run:
-    #    working-directory: './terraform'
+    defaults:
+      run:
+        working-directory: './terraform'
     strategy:
       fail-fast: false
       matrix:
@@ -97,7 +97,7 @@ jobs:
       id: init
       run: |
         rm -rf .terraform
-        terraform init -backend-config='./.env/${{ matrix['path'] || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
+        terraform init -backend-config='.env/${{ matrix['path'] || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
         terraform workspace select "${{matrix['path']}}" || terraform workspace new "${{matrix['path']}}"
 
     - name: Post Init - ${{ matrix['path'] }}
