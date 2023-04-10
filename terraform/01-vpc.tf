@@ -1,7 +1,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "${local.name}-${var.vpc_name}"
+  name = "${local.prefix_name}-vpc"
   cidr = var.vpc_cidr_block
   #secondary_cidr_blocks   = var.secondary_cidr_blocks
   azs = var.vpc_availability_zones
@@ -22,13 +22,13 @@ module "vpc" {
   create_database_subnet_route_table = var.vpc_create_database_subnet_route_table
 
   manage_default_network_acl = true
-  default_network_acl_tags   = { Name = "${local.name}-default-acl" }
+  default_network_acl_tags   = { Name = "${local.prefix_name}-default-acl" }
 
   manage_default_route_table = true
-  default_route_table_tags   = { Name = "${local.name}-default-rt" }
+  default_route_table_tags   = { Name = "${local.prefix_name}-default-rt" }
 
   manage_default_security_group = true
-  default_security_group_tags   = { Name = "${local.name}-default-sg" }
+  default_security_group_tags   = { Name = "${local.prefix_name}-default-sg" }
 
   enable_dns_hostnames = true
   enable_dns_support   = true
@@ -62,12 +62,12 @@ module "vpc" {
   flow_log_max_aggregation_interval    = 60
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}-eks"  = "shared"
+    "kubernetes.io/cluster/${local.prefix_name}-eks"  = "shared"
     "kubernetes.io/role/elb" = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}-eks"  = "shared"
+    "kubernetes.io/cluster/${local.prefix_name}-eks"  = "shared"
     "kubernetes.io/role/internal-elb" = 1
   }
   tags = local.common_tags

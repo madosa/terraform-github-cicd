@@ -138,17 +138,17 @@ jobs:
       environment: 'dev'
     secrets: inherit
   
-  deployment-prod:
-    needs: [deployment-dev]
-    #needs: infracost
-    permissions:
-      id-token: write  # need this for OIDC
-      contents: read   # This is required for actions/checkout
-    #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
-    uses: ./.github/workflows/deployment.yml
-    with:
-      # need to specify working-directory as that's where the terraform files live in the source code
-      working-directory: ./terraform
-      environment: 'prod'
-      #environment: ${{ inputs.environment }}
-    secrets: inherit
+  #deployment-prod:
+  #  needs: [deployment-dev]
+  #  #needs: infracost
+  #  permissions:
+  #    id-token: write  # need this for OIDC
+  #    contents: read   # This is required for actions/checkout
+  #  #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
+  #  uses: ./.github/workflows/deployment.yml
+  #  with:
+  #    # need to specify working-directory as that's where the terraform files live in the source code
+  #    working-directory: ./terraform
+  #    environment: 'prod'
+  #    #environment: ${{ inputs.environment }}
+  #  secrets: inherit
