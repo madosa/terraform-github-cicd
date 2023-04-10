@@ -22,13 +22,13 @@ module "vpc" {
   create_database_subnet_route_table = var.vpc_create_database_subnet_route_table
 
   manage_default_network_acl = true
-  default_network_acl_tags   = { Name = "${local.name}-default-acl" }
+  default_network_acl_tags   = { Name = "${local.prefix_name}-default-acl" }
 
   manage_default_route_table = true
-  default_route_table_tags   = { Name = "${local.name}-default-rt" }
+  default_route_table_tags   = { Name = "${local.prefix_name}-default-rt" }
 
   manage_default_security_group = true
-  default_security_group_tags   = { Name = "${local.name}-default-sg" }
+  default_security_group_tags   = { Name = "${local.prefix_name}-default-sg" }
 
   enable_dns_hostnames = true
   enable_dns_support   = true
