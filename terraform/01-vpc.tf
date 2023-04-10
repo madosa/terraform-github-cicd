@@ -62,12 +62,12 @@ module "vpc" {
   flow_log_max_aggregation_interval    = 60
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}-eks"  = "shared"
+    "kubernetes.io/cluster/${local.prefix_name}-eks"  = "shared"
     "kubernetes.io/role/elb" = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}-eks"  = "shared"
+    "kubernetes.io/cluster/${local.prefix_name}-eks"  = "shared"
     "kubernetes.io/role/internal-elb" = 1
   }
   tags = local.common_tags
